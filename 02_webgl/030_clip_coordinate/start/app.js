@@ -13,8 +13,8 @@ function startup() {
     program: shaderProgram,
     attribLocations: {
       // 頂点データが格納されているインデックスを取得
-      position: gl.getAttribLocation(shaderProgram, "aVertexPosition")
-    }
+      position: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
+    },
   };
   programInfo.verticeNum = setupBuffers(programInfo);
 
@@ -101,12 +101,8 @@ function setupBuffers(pInfo) {
   // 位置を管理する頂点の入れ物（バッファ）を作成
   const vertexPositionBuffer = gl.createBuffer();
   // 頂点の位置を指定（-1 ~ 1）
-  const triangleVertices = [
-    -1, -1,
-    1, 1,
-    -1, 1
-  ];
-  
+  const triangleVertices = [1, -1, -1, -1, -1, 1];
+
   // ARRAY_BUFFERに頂点データを格納するバッファを紐づける
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
   // ARRAY_BUFFERバッファに頂点データをロードする
