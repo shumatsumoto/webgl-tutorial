@@ -76,9 +76,10 @@ function setupShaders() {
   const fragmentShaderSource = `
     precision mediump float;
     varying vec3 vVertexColor;
+    uniform vec3 uColor;
 
     void main() {
-        gl_FragColor = vec4(vVertexColor, 1.);
+        gl_FragColor = vec4(uColor, 1.);
     }
   `;
 
@@ -135,11 +136,7 @@ function setupBuffers(pInfo) {
    * 色を設定
    */
   // 頂点の色
-  const colorVertices = [
-    1, 0, 0,
-    0, 1, 0,
-    0, 0, 1
-  ];
+  const colorVertices = [1, 0, 0, 0, 1, 0, 0, 0, 1];
 
   // 位置を管理する頂点の入れ物（バッファ）を作成
   const vertexColorBuffer = gl.createBuffer();
@@ -179,6 +176,11 @@ function draw(pInfo) {
   gl.clear(gl.COLOR_BUFFER_BIT);
   // WebGLのコンテキストが使用するプログラムを指定
   gl.useProgram(pInfo.program);
+
+  // Uniformの定義
+  const uColorLoc = gl.getUniformLocation(pInfo.program, "uColor");
+  gl.uniform3fv(uColorLoc, [1, 0, 0]);
+
   // ARRAY_BUFFERに格納されている頂点を元に画面描写
   gl.drawArrays(gl.TRIANGLES, 0, pInfo.verticeNum);
 }
