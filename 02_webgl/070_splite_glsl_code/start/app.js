@@ -1,12 +1,13 @@
 /**
  * GLSL
  * OpenGL Shading Language
- * 
+ *
  * WebGL GLSL Editor
  * Extension ID [raczzalan.webgl-glsl-editor]
  */
 import { makeDebugContext } from "./webgl-debug.js";
-
+import fragShaderSource from "./flag.glsl";
+import vertShaderSource from "./vert.glsl";
 let gl;
 
 window.onload = startup;
@@ -67,29 +68,8 @@ function loadShader(type, shaderSource) {
  * シェーダーコードをWebGLコンテキストにバインド
  */
 function setupShaders() {
-  const vertexShaderSource = `
-    precision mediump float;
-    
-    attribute vec2 aVertexPosition;
-    attribute vec3 aVertexColor;
-    varying vec3 vVertexColor;
-    uniform float uTick;
-    
-    void main() {
-      vec2 p = aVertexPosition * sin(uTick * 0.01);
-      vVertexColor = aVertexColor;
-      gl_Position = vec4(p, 0.0, 1.0);
-    }
-    `;
-  const fragmentShaderSource = `
-    precision mediump float;
-    varying vec3 vVertexColor;
-    uniform vec2 uColor;
-
-    void main() {
-        gl_FragColor = vec4(1.0, 1.0, 0.0, 1.);
-    }
-  `;
+  const vertexShaderSource = vertShaderSource;
+  const fragmentShaderSource = fragShaderSource;
 
   const vertexShader = loadShader(gl.VERTEX_SHADER, vertexShaderSource);
   const fragmentShader = loadShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
@@ -144,11 +124,7 @@ function setupBuffers(pInfo) {
    * 色を設定
    */
   // 頂点の色
-  const colorVertices = [
-    1, 0, 0,
-    0, 1, 0,
-    0, 0, 1
-  ];
+  const colorVertices = [1, 0, 0, 0, 1, 0, 0, 0, 1];
 
   // 位置を管理する頂点の入れ物（バッファ）を作成
   const vertexColorBuffer = gl.createBuffer();
@@ -182,14 +158,14 @@ function setupBuffers(pInfo) {
 function draw(pInfo) {
   // WebGLのコンテキストとキャンパスのサイズを同じにする。
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-  
+
   // WebGLのコンテキストが使用するプログラムを指定
   gl.useProgram(pInfo.program);
 
   // Uniformの定義
   const uColorLoc = gl.getUniformLocation(pInfo.program, "uColor");
   const uTickLoc = gl.getUniformLocation(pInfo.program, "uTick");
-  
+
   let tick = 0;
 
   animate();
@@ -199,7 +175,7 @@ function draw(pInfo) {
     gl.clearColor(0, 0, 0, 1);
     // 上記で指定した背景色を描写
     gl.clear(gl.COLOR_BUFFER_BIT);
-    
+
     gl.uniform2f(uColorLoc, 1, 1);
     gl.uniform1f(uTickLoc, tick);
     // ARRAY_BUFFERに格納されている頂点を元に画面描写
