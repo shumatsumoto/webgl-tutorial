@@ -13,8 +13,9 @@ function startup() {
     program: shaderProgram,
     attribLocations: {
       // 頂点データが格納されているインデックスを取得
-      position: gl.getAttribLocation(shaderProgram, "aVertexPosition")
-    }
+      position: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
+      color: gl.getAttribLocation(shaderProgram, "aVertexColor"),
+    },
   };
   programInfo.verticeNum = setupBuffers(programInfo);
 
@@ -61,18 +62,23 @@ function loadShader(type, shaderSource) {
 function setupShaders() {
   const vertexShaderSource = `
     precision mediump float;
+    
     attribute vec2 aVertexPosition;
+    attribute vec3 aVertexColor;
+    varying vec3 vVertexColor;
 
     void main() {
       vec2 p = aVertexPosition;
+      vVertexColor = aVertexColor;
       gl_Position = vec4(p, 0.0, 1.0);
     }
     `;
   const fragmentShaderSource = `
     precision mediump float;
+    varying vec3 vVertexColor;
 
     void main() {
-        gl_FragColor = vec4(0., 1., 0., 1.);
+        gl_FragColor = vec4(vVertexColor, 1.);
     }
   `;
 
@@ -101,12 +107,8 @@ function setupBuffers(pInfo) {
   // 位置を管理する頂点の入れ物（バッファ）を作成
   const vertexPositionBuffer = gl.createBuffer();
   // 頂点の位置を指定（-1 ~ 1）
-  const triangleVertices = [
-    1, 0,
-    -1, -1,
-    -1, 1
-  ];
-  
+  const triangleVertices = [1, 0, -1, -1, -1, 1];
+
   // ARRAY_BUFFERに頂点データを格納するバッファを紐づける
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
   // ARRAY_BUFFERバッファに頂点データをロードする
@@ -128,6 +130,37 @@ function setupBuffers(pInfo) {
 
   // 属性を有効化する
   gl.enableVertexAttribArray(pInfo.attribLocations.position);
+
+  /**
+   * 色を設定
+   */
+  // 頂点の色
+  const colorVertices = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+
+  // 位置を管理する頂点の入れ物（バッファ）を作成
+  const vertexColorBuffer = gl.createBuffer();
+
+  // ARRAY_BUFFERに頂点データを格納するバッファを紐づける
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
+  // ARRAY_BUFFERバッファに頂点データをロードする
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array(colorVertices),
+    gl.STATIC_DRAW
+  );
+
+  // シェーダーコード内から抽出された属性（attribute）と上記でアップした頂点データを紐づける
+  gl.vertexAttribPointer(
+    pInfo.attribLocations.color,
+    colorVertices.length / verticeNum,
+    gl.FLOAT,
+    false,
+    0,
+    0
+  );
+
+  // 属性を有効化する
+  gl.enableVertexAttribArray(pInfo.attribLocations.color);
 
   return verticeNum;
 }
