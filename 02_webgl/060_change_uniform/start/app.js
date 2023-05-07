@@ -70,9 +70,10 @@ function setupShaders() {
     attribute vec2 aVertexPosition;
     attribute vec3 aVertexColor;
     varying vec3 vVertexColor;
+    uniform float uTick;
     
     void main() {
-      vec2 p = aVertexPosition;
+      vec2 p = aVertexPosition * sin(uTick * 0.01);
       vVertexColor = aVertexColor;
       gl_Position = vec4(p, 0.0, 1.0);
     }
@@ -140,11 +141,7 @@ function setupBuffers(pInfo) {
    * 色を設定
    */
   // 頂点の色
-  const colorVertices = [
-    1, 0, 0,
-    0, 1, 0,
-    0, 0, 1
-  ];
+  const colorVertices = [1, 0, 0, 0, 1, 0, 0, 0, 1];
 
   // 位置を管理する頂点の入れ物（バッファ）を作成
   const vertexColorBuffer = gl.createBuffer();
@@ -178,16 +175,25 @@ function setupBuffers(pInfo) {
 function draw(pInfo) {
   // WebGLのコンテキストとキャンパスのサイズを同じにする。
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-  // 背景色を特定の色で指定（0~1のrgbaで指定）
-  gl.clearColor(0, 0, 0, 1);
-  // 上記で指定した背景色を描写
-  gl.clear(gl.COLOR_BUFFER_BIT);
   // WebGLのコンテキストが使用するプログラムを指定
   gl.useProgram(pInfo.program);
-
   // Uniformの定義
   const uColorLoc = gl.getUniformLocation(pInfo.program, "uColor");
-  gl.uniform2f(uColorLoc, 1, 1);
-  // ARRAY_BUFFERに格納されている頂点を元に画面描写
-  gl.drawArrays(gl.TRIANGLES, 0, pInfo.verticeNum);
+  const uTickLoc = gl.getUniformLocation(pInfo.program, "uTick");
+
+  let tick = 0;
+  animate();
+  function animate() {
+    tick++;
+    // 背景色を特定の色で指定（0~1のrgbaで指定）
+    gl.clearColor(0, 0, 0, 1);
+    // 上記で指定した背景色を描写
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform2f(uColorLoc, 1, 1);
+    gl.uniform1f(uTickLoc, tick);
+    // ARRAY_BUFFERに格納されている頂点を元に画面描写
+    gl.drawArrays(gl.TRIANGLES, 0, pInfo.verticeNum);
+
+    window.requestAnimationFrame(animate);
+  }
 }
