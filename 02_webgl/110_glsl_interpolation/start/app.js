@@ -85,12 +85,12 @@ function setupShaders() {
 // 頂点データを格納するバッファを設定
 function setupBuffers(pInfo) {
   // 頂点の数
-  const verticeNum = 3;
+  const verticeNum = 6;
 
   // 位置を管理する頂点の入れ物（バッファ）を作成
   const vertexPositionBuffer = gl.createBuffer();
   // 頂点の位置を指定（-1 ~ 1）
-  const triangleVertices = [-1, -1, 1, -1, 1, 1];
+  const triangleVertices = [-1, -1, 1, -1, 1, 1, -1, -1, -1, 1, 1, 1];
 
   // ARRAY_BUFFERに頂点データを格納するバッファを紐づける
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
