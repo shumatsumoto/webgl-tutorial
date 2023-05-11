@@ -16,7 +16,7 @@
  renderer.setSize(window.innerWidth, window.innerHeight);
  document.body.appendChild(renderer.domElement);
  
- const geometry = new THREE.BoxGeometry(2, 2, 2);
+ const geometry = new THREE.PlaneGeometry(2, 2);
  const material = new THREE.ShaderMaterial({
    vertexShader: `
      varying vec2 vUv;
@@ -33,9 +33,11 @@
        gl_FragColor = vec4(vUv, 0.5, 0.1);
      }
    `,
+   wireframe: true
  });
  const cube = new THREE.Mesh(geometry, material);
  scene.add(cube);
+ console.log(geometry)
  
  camera.position.z = 5;
  
@@ -43,8 +45,8 @@
  function animate() {
    requestAnimationFrame(animate);
  
-   cube.rotation.x = cube.rotation.x + 0.01;
-   cube.rotation.y += 0.01;
+  //  cube.rotation.x = cube.rotation.x + 0.01;
+  //  cube.rotation.y += 0.01;
  
    renderer.render(scene, camera);
  }
