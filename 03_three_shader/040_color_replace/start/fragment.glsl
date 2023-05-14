@@ -1,17 +1,22 @@
 varying vec2 vUv;
 uniform sampler2D uTex;
+uniform float uTick;
 
 void main() {
-    // vVertexPosition = (-1, 0) => (1, 1)
-    // colorTmp = (0, 0) => (1, 1)
-    vec2 center = vec2(0.5 * 2.0, 0.5);
-    vec2 p = vUv;
-    p.x = p.x * 2.0;
-    // p.y = p.y * 1.0;
-    float len = distance(p, center) * 4.0;
-    float circle = 1. - smoothstep(.98, 1.0, len);
+    float time = uTick * 0.01;
+    vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 texColor = texture(uTex, vUv);
-    vec4 color = texColor * circle;
+
+    // 一行で色の入れ替え
+    // color.rgb = texColor.gbr;
+
+    // 時間で色の変化
+    // color.r = texColor.g * sin(time);
+    // color.g = texColor.b * cos(time);
+    // color.b = texColor.r;
+
+    // 色を反転
+    color.rgb = 1.0 - texColor.rgb;
 
     gl_FragColor = color;
     // gl_FragColor = texColor;
