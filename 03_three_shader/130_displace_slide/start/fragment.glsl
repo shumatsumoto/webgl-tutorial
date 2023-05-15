@@ -6,11 +6,12 @@ precision mediump float;
 varying vec2 vUv;
 uniform sampler2D uTexCurrent;
 uniform sampler2D uTexNext;
+uniform sampler2D uTexDisp;
 uniform float uTick;
 uniform float uProgress;
 uniform vec2 uNoiseScale;
-float parabola( float x, float k ) {
-  return pow( 4. * x * ( 1. - x ), k );
+float parabola(float x, float k) {
+  return pow(4. * x * (1. - x), k);
 }
 void main() {
 
@@ -22,8 +23,14 @@ void main() {
   n = n + uProgress;
 
   n = step(0.0, n);
-  
-  vec4 texCurrent = texture(uTexCurrent, vUv);
-  vec4 texNext = texture(uTexNext, vUv);
-  gl_FragColor = mix(texCurrent, texNext, n);
+
+  vec4 texDisp = texture(uTexDisp, vUv);
+  float disp = texDisp.r;
+  disp = disp * parabola(uProgress, 1.0);
+  vec2 dispUv = vec2(vUv.x, vUv.y + disp);
+  vec2 dispUv2 = vec2(vUv.x, vUv.y - disp);
+  vec4 texCurrent = texture(uTexCurrent, dispUv);
+  vec4 texNext = texture(uTexNext, dispUv2);
+  // gl_FragColor = texCurrent;
+  gl_FragColor = mix(texCurrent, texNext, uProgress);
 }
