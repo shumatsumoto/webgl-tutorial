@@ -5,7 +5,7 @@
 import * as THREE from "three";
 import vertexShader from "./vertex.glsl";
 import fragmentShader from "./fragment.glsl";
-// import GUI from "lil-gui"; // コメントを外して利用ください。
+import GUI from "lil-gui"; // コメントを外して利用ください。
 
 init();
 async function init() {
@@ -35,10 +35,14 @@ async function init() {
     uniforms: {
       uTex: { value: await loadTex("/img/output2.jpg") },
       uTick: { value: 0 },
+      uNoiseScale: {
+        value: new THREE.Vector2(10, 10),
+      },
     },
     vertexShader,
     fragmentShader,
   });
+  console.log(material.uniforms.uNoiseScale.value);
   const cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
 
@@ -46,12 +50,12 @@ async function init() {
 
   // lil gui
   // 以下、コメントを外して利用ください。
-  // const gui = new GUI();
-  // const folder1 = gui.addFolder("Noise");
-  // folder1.open();
+  const gui = new GUI();
+  const folder1 = gui.addFolder("Noise");
+  folder1.open();
 
-  // folder1.add(material.uniforms.uNoiseScale.value, "x", 0, 100, 1);
-  // folder1.add(material.uniforms.uNoiseScale.value, "y", 0, 100, 1);
+  folder1.add(material.uniforms.uNoiseScale.value, "x", 0, 100, 1);
+  folder1.add(material.uniforms.uNoiseScale.value, "y", 0, 100, 1);
 
   let i = 0;
   function animate() {
