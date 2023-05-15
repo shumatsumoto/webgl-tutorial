@@ -11,11 +11,11 @@ uniform float uProgress;
 uniform vec2 uNoiseScale;
 
 void main() {
-
-  // ヨコシマのノイズ
-   float n = noise3(vec3(vUv.x * uNoiseScale.x, vUv.y * uNoiseScale.y, uTick * 0.01));
-
+  float n = noise2(vec2(vUv.x * uNoiseScale.x, vUv.y * uNoiseScale.y));
+  n = n * 0.5 - 0.5;
+  n = n + uProgress;
+  n = step(0.0, n);
   vec4 texCurrent = texture(uTexCurrent, vUv);
   vec4 texNext = texture(uTexNext, vUv);
-  gl_FragColor = mix(texCurrent, texNext, uProgress);
+  gl_FragColor = mix(texCurrent, texNext, n);
 }
